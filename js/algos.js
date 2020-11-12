@@ -5,7 +5,7 @@ Number.prototype.toRadians = function () {
 
 
 // Calculates the distance between Grenoble and the given city
-function distanceFromGrenoble(city) {
+const distanceFromGrenoble = city => {
     const R = 6371e3; // metres
     const GrenobleLat = 45.166667;
     const GrenobleLong = 5.716667;
@@ -27,7 +27,7 @@ function distanceFromGrenoble(city) {
 // Returns the index in csvData corresponding to arg.
 // If arg is an integer, the function returns the csvData index for the value contained in array[arg]
 // If arg is an object, the function returns the csvData for that object
-function resolveArgument(arg, array){
+const resolveArgument = (arg, array) => {
     return (arg === parseInt(arg, 10)) ? csvData.indexOf(array[arg]) : csvData.indexOf(arg);
 }
 
@@ -35,7 +35,7 @@ function resolveArgument(arg, array){
 // Swap 2 values in array csvData
 // i is the index of the first city
 // j is the index of the second city
-function swap(i, j, array = csvData) {
+const swap = (i, j, array = csvData) => {
     i = resolveArgument(i, array);
     j = resolveArgument(j, array);
 
@@ -49,16 +49,17 @@ function swap(i, j, array = csvData) {
 // Returns true if city with index i in csvData is closer to Grenoble than city with index j
 // i is the index of the first city
 // j is the index of the second city
-function isLess(i, j, array = csvData) {
+const isLess = (i, j, array = csvData) => {
     i = resolveArgument(i, array);
     j = resolveArgument(j, array);
 
     displayBuffer.push(['compare', i, j]); // Do not delete this line (for display)
 
     return distanceFromGrenoble(csvData[i]) < distanceFromGrenoble(csvData[j]);
-}
+};
 
-function merge(leftArray, rightArray, start) {
+// Merge function for mergesort
+const merge = (leftArray, rightArray, start) => {
     let result = [];
 
     while (leftArray.length && rightArray.length) {
@@ -80,8 +81,29 @@ function merge(leftArray, rightArray, start) {
     }
 
     return result;
-}
+};
 
+// SiftDown function for heapsort
+const siftDown = (tree, node, n) => {
+    let k = node;
+    let j = 2*k;
+
+    while (j <= n){
+        if (j < n && isLess(j, j+1)){
+            j++;
+        }
+
+        if (isLess(k, j)){
+            swap(k, j, tree);
+            k = j;
+            j = 2*k;
+        } else {
+            j = n + 1;
+        }
+    }
+};
+
+// QuicksortPartition function for quicksort
 const quicksortPartition = (array, low, high) => {
     let i = low;
     for (let j = low; j <= high; j++) {
@@ -93,6 +115,11 @@ const quicksortPartition = (array, low, high) => {
     swap(i, high, array);
     return i;
 };
+
+
+//----------------------------------------------------------------
+//Sorting algorithms
+//----------------------------------------------------------------
 
 function insertsort(array) {
     for (let i = 1; i < array.length; i++) {
@@ -158,7 +185,14 @@ function mergesort(array, start = 0) {
 }
 
 function heapsort(array) {
-    console.log("heapsort - implement me !");
+    for (let i = Math.ceil((array.length - 1)/2); i >= 0; i--){
+        siftDown(array, i, array.length-1);
+    }
+
+    for (let i = array.length-1; i > 0; i--){
+        swap(i, 0);
+        siftDown(array, 0, i-1);
+    }
 }
 
 function quicksort(array, low = 0, high = array.length - 1) {
