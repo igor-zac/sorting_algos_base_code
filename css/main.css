@@ -21,3 +21,7 @@ div.tooltip {
   border-radius: 8px;
   pointer-events: none;
 }
+
+body {
+    margin-top: 50px;
+}
